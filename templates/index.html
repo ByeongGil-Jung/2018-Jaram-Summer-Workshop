@@ -10,30 +10,55 @@
     $(document).ready(function(){
         let git_readme = null;
         let issue_list = null;
-        let full_request_list = null;
-
-        $("#prepare").val("준비중 ...");
+        let pull_request_list = null;
+        let user = null;
+        let repo = null;
 
         $("#insert_button").click(function() {
-            // $("#prepare").remove();
+            $("#prepare").replaceWith("<div id='prepare'>준비중 ...</div>");
             $.ajax({
                 type: "POST",
                 url: "/input",
                 data: {user: $("#insert_user").val(), repo: $("#insert_repo").val()},
                 dataType: "JSON",
                 success: function(data) {
+                    user = $("#insert_user").val();
+                    repo = $("#insert_repo").val();
+
                     git_readme = data["git_readme"];
                     issue_list = data["issue_list"];
-                    full_request_list = data["full_request_list"];
-
-                    console.log(git_readme, issue_list, full_request_list);
+                    pull_request_list = data["pull_request_list"];
 
                     showGitReadMe(git_readme);
-                    // showIssueList(issue_list);
-                    // showFullRequestList(full_request_list);
                 },
                 error: function (xhr, status, error) {
                     console.log("Error 발생");
+                    console.log(error);
+                }
+            })
+        });
+
+        $("#notificator").click(function() {
+            let something_changed = null;
+
+            $("#notificator").replaceWith("<div id='notificator'>알림 작동 중 ...</div>");
+            $.ajax({
+                type: "POST",
+                url: "/noti",
+                data: {issue_len: issue_list.length, pull_req_len: pull_request_list.length, user: user, repo: repo},
+                dataType: "JSON",
+                success: function(data) {
+                    git_readme = data["git_readme"];
+                    issue_list = data["issue_list"];
+                    pull_request_list = data["pull_request_list"];
+                    something_changed = data["something_changed"]
+                    $("#notificator").replaceWith(
+                        "<button id='notificator'>Noti 알림 ON</button>" +
+                        "<div id='check_or'>변경사항 발견 : " + something_changed + "</div>"
+                    );
+                },
+                error: function (xhr, status, error) {
+                    console.log("Noti Error 발생");
                     console.log(error);
                 }
             })
@@ -47,8 +72,8 @@
             showIssueList(issue_list)
         });
 
-        $("#change_full_request").click(function() {
-            showFullRequestList(full_request_list)
+        $("#change_pull_request").click(function() {
+            showPullRequestList(pull_request_list)
         });
 
         function showGitReadMe(git_readme) {
@@ -65,11 +90,11 @@
             })
         }
 
-        function showFullRequestList(full_request_list) {
+        function showPullRequestList(pull_request_list) {
             $("#prepare").replaceWith("<ul id='prepare'></ul>");
 
-            full_request_list.forEach(full_request => {
-                $("#prepare").append("<li>" + full_request + "</li>");
+            pull_request_list.forEach(pull_request => {
+                $("#prepare").append("<li>" + pull_request + "</li>");
             })
         }
     })
@@ -83,7 +108,9 @@
     <div>
         <button id="change_readme">Readme 보기</button>
         <button id="change_issue">Issue 확인</button>
-        <button id="change_full_request">Full request 확인</button>
+        <button id="change_pull_request">Pull request 확인</button>
+        <button id="notificator">Noti 알림 ON</button>
+        <input type="hidden" id="noti_switch" name="noti_switch" value="False"/>
     </div>
     <div id="show">
         <div id="prepare"></div>

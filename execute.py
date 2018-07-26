@@ -12,7 +12,7 @@ def parsing(url):
 
 def return_README(html_README):
     README_box = html_README.find("div", "Box Box--condensed instapaper_body md")
-    if README_box == None:
+    if README_box is None:
         # print("There is no README.md in the repository.")
 
         return None
@@ -24,9 +24,9 @@ def return_README(html_README):
 
 def return_list(html):
     box = html.find("div", "border-right border-bottom border-left")
-    if box == None:
+    if box is None:
         # print("There is no Issuses or PR (Status : \"Open\") in the repository")
-        
+
         return []
     else:
         list_ = []

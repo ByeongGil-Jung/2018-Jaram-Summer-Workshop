@@ -33,7 +33,7 @@ app.on('ready', function() {
     mainWindow.webContents.openDevTools();
 
     // Load the index page
-    mainWindow.loadURL('http://localhost:8030/');
+    mainWindow.loadURL('http://localhost:8011/');
 
     // Open the DevTools.
     //mainWindow.webContents.openDevTools();

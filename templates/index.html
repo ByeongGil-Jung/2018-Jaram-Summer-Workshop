@@ -41,7 +41,9 @@
         $("#notificator").click(function() {
             let something_changed = null;
 
-            $("#notificator").replaceWith("<div id='notificator'>알림 작동 중 ...</div>");
+            $("#notificator").hide();
+            $("#inform").replaceWith("<p id='inform'>알림 작동 중 ...</p>");
+
             $.ajax({
                 type: "POST",
                 url: "/noti",
@@ -51,11 +53,10 @@
                     git_readme = data["git_readme"];
                     issue_list = data["issue_list"];
                     pull_request_list = data["pull_request_list"];
-                    something_changed = data["something_changed"]
-                    $("#notificator").replaceWith(
-                        "<button id='notificator'>Noti 알림 ON</button>" +
-                        "<div id='check_or'>변경사항 발견 : " + something_changed + "</div>"
-                    );
+                    something_changed = data["something_changed"];
+
+                    $("#notificator").show();
+                    $("#inform").replaceWith("<p id='inform'>변경사항 발견 : " + something_changed + "</p>");
                 },
                 error: function (xhr, status, error) {
                     console.log("Noti Error 발생");
@@ -65,21 +66,21 @@
         });
 
         $("#change_readme").click(function() {
-            showGitReadMe(git_readme)
+            showGitReadMe(git_readme);
         });
 
         $("#change_issue").click(function() {
-            showIssueList(issue_list)
+            showIssueList(issue_list);
         });
 
         $("#change_pull_request").click(function() {
-            showPullRequestList(pull_request_list)
+            showPullRequestList(pull_request_list);
         });
 
         function showGitReadMe(git_readme) {
             $("#prepare").replaceWith("<div id='prepare'></div>");
             let div_html = $("#prepare").html(git_readme);
-            $("#show").after(div_html)
+            $("#show").after(div_html);
         }
 
         function showIssueList(issue_list) {
@@ -105,7 +106,7 @@
         <label><input type="text" id="insert_repo" placeholder="Repository"/></label>
         <button id="insert_button">호출</button>
     </div>
-    <div>
+    <div id="button_">
         <button id="change_readme">Readme 보기</button>
         <button id="change_issue">Issue 확인</button>
         <button id="change_pull_request">Pull request 확인</button>
@@ -113,6 +114,7 @@
         <input type="hidden" id="noti_switch" name="noti_switch" value="False"/>
     </div>
     <div id="show">
+        <div id="inform"></div>
         <div id="prepare"></div>
     </div>
 </body>
